@@ -1,0 +1,45 @@
+buildscript {
+    ext {
+        v_querydsl = '4.1.4'
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$v_kotlin"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+group = 'test.kapt'
+version = '0.1'
+
+def srcdir_apt = file("$projectDir/build/generated/source/kapt/main")
+
+idea {
+    module {
+        sourceDirs += srcdir_apt
+    }
+}
+
+dependencies {
+    compile project(':project-c')
+
+    // Kotlin
+    compile "org.jetbrains.kotlin:kotlin-runtime:$v_kotlin"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$v_kotlin"
+
+    // queryDSL
+    compile "com.querydsl:querydsl-core:$v_querydsl"
+    compile "com.querydsl:querydsl-collections:$v_querydsl" // QueryDSL codegen/annotation processor
+    compile "org.eclipse.persistence:javax.persistence:$v_javax_persistence"
+
+    kapt "com.querydsl:querydsl-apt:$v_querydsl:jpa"
+    kapt "org.eclipse.persistence:javax.persistence:$v_javax_persistence"
+}
+
+kapt {
+    generateStubs = true
+}
